@@ -1,6 +1,6 @@
 import { IReq, IRes } from '../utils/types';
 import moment from 'moment';
-import { ConceptDeclaration, ModelManager } from '@accordproject/concerto-core';
+import { ClassDeclaration, ConceptDeclaration, ModelManager } from '@accordproject/concerto-core';
 import path from 'path';
 import { ModelManagerUtil } from '../utils/modelManagerUtil';
 import { GetTypeDefinitionsBody, GetTypeNamesBody, TypeNameInfo, VerifyBody } from 'src/models/connectedfields';
@@ -12,7 +12,10 @@ import {
   verifyBankAccountOwner,
   verifySSN,
   verifyBusinessEntity,
+  verifyVehicleIdentification,
 } from 'src/utils/dataVerification';
+import { DeclarationUnion, IDeclaration } from '@accordproject/concerto-types';
+import VehicleDatabase from 'src/db/vehicleDatabase';
 
 enum DECORATOR_NAMES {
   TERM = 'Term',
@@ -48,6 +51,22 @@ const generateErrorResponse = (message: string, code: string): ErrorResponse => 
  */
 const MODEL_MANAGER: ModelManager = ModelManagerUtil.createModelManagerFromCTO(path.join(__dirname, '../dataModel/model.cto'));
 const CONCEPTS: ConceptDeclaration[] = MODEL_MANAGER.getConceptDeclarations();
+const DECLARATIONS: DeclarationUnion[] = MODEL_MANAGER.getModelFile('org.example@1.0.0')
+  .getAllDeclarations()
+  .map((decl: ClassDeclaration) => {
+    const ast = decl.ast;
+    if (typeof ast === 'object' && 'name' in ast) {
+      return ast as IDeclaration;
+    }
+
+    throw new TypeError('Unexpected type for declaration object');
+  });
+
+/**
+ * Database for vehicles.
+ * This is just reading from a CSV file
+ */
+const VEHICLE_DB = new VehicleDatabase(path.join(__dirname, '../db/vehicleDatabase.csv'));
 
 /**
  * Retrieves the type names for Account and MasterRecordId and Address.
@@ -82,7 +101,7 @@ export const getTypeDefinitions = (req: IReq<GetTypeDefinitionsBody>, res: IRes)
   MODEL_MANAGER.addCTOModel;
   try {
     return res.json({
-      declarations: CONCEPTS.map((concept: ConceptDeclaration) => concept.ast),
+      declarations: DECLARATIONS,
     });
   } catch (err) {
     console.log(`Encountered an error getting type definitions: ${err.message}`);
@@ -122,6 +141,8 @@ export const verify = (req: IReq<VerifyBody>, res: IRes): IRes => {
         return res.status(200).json(verifySSN(data)).send();
       case 'VerifyBusinessEntityInput':
         return res.status(200).json(verifyBusinessEntity(data)).send();
+      case 'VehicleIdentification':
+        return res.status(200).json(verifyVehicleIdentification(data, VEHICLE_DB)).send();
       default:
         return res
           .status(400)

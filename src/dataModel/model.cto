@@ -131,3 +131,19 @@ concept VerifyBusinessEntityInput {
     @Term("FEIN")
     o String fein regex=/^\\d{2}[-\\s]?\\d{7}$|^\\d{9}$/
 }
+
+@VerifiableType
+@Term("Vehicle Identification")
+concept VehicleIdentification {
+    @IsRequiredForVerifyingType
+    @Term("VIN")
+    o String vin
+
+    @IsRequiredForVerifyingType
+    @Term("State of Registration")
+    o String stateOfRegistration
+
+    @IsRequiredForVerifyingType
+    @Term("Country of Registration")
+    o String countryOfRegistration
+}

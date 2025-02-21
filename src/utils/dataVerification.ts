@@ -1,3 +1,4 @@
+import VehicleDatabase from 'src/db/vehicleDatabase';
 import { VerifyResponse } from 'src/models/connectedfields';
 
 export const verifyEmail = (data: any) => {
@@ -37,6 +38,13 @@ export const verifyPostalAddress = (data: any) => {
   if (data.street1) {
     if (data.street1.length > 100) {
       errors.push('Address Line 1 must be less than 100 characters.');
+    } else {
+      // Testing the autofill scenario
+      if (data.street1.toString().toLowerCase().includes("221 main st") && data.postalCode?.toString() !== "94105") {
+        const suggestions = [{ postalCode: "94105" }];
+        const failureMessage = "Invalid postal code. A suggestion for postal code was autofilled. Please verify again."
+        return generateFailedResultWithSuggestions(suggestions, failureMessage);
+      }
     }
   }
 
@@ -185,6 +193,29 @@ export const verifyBusinessEntity = (data: any) => {
   return generateResult(errors, 'Business entity verification completed.');
 };
 
+export const verifyVehicleIdentification = (data: any, vehicleDb: VehicleDatabase) => {
+  const errors: string[] = [];
+
+  if (!data.vin) {
+    errors.push('VIN not provided.');
+  } else {
+    if (!data.stateOfRegistration || !data.countryOfRegistration) {
+      errors.push('State or country of registration not provided.');
+    } else {
+      const vehicle = vehicleDb.findRecord('vin', data.vin);
+      if (!vehicle) {
+        errors.push(`Could not find the vehicle with VIN ${data.vin}`);
+      } else {
+        if (vehicle.stateOfRegistration !== data.stateOfRegistration || vehicle.countryOfRegistration !== data.countryOfRegistration) {
+          errors.push('State or country of registration do not match.');
+        }
+      }
+    }
+  }
+
+  return generateResult(errors, 'Vehicle identification verification completed.');
+};
+
 const generateResult = (errors: string[], successMessage: string): VerifyResponse => {
   if (errors.length > 0) {
     return {
@@ -201,5 +232,15 @@ const generateResult = (errors: string[], successMessage: string): VerifyRespons
     verifyResponseMessage: successMessage,
     verificationResultCode: 'SUCCESS',
     verificationResultDescription: successMessage,
+  };
+};
+
+const generateFailedResultWithSuggestions = (suggestions: object[], failureMessage: string): VerifyResponse => {
+  return {
+    verified: false,
+    verifyResponseMessage: 'Verification failed.',
+    verifyFailureReason: failureMessage,
+    verificationResultCode: 'VALIDATION_ERRORS',
+    suggestions: suggestions
   };
 };
