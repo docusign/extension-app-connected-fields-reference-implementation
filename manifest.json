@@ -29,7 +29,7 @@
                         "prompt": "consent",
                         "access_type": "offline"
                     },
-                    "authorizationUrl": "<PROXY_BASE_URL>/api/oauth/consent",
+                    "authorizationUrl": "<PROXY_BASE_URL>/api/oauth/authorize",
                     "requiredScopes": [],
                     "scopeSeparator": " ",
                     "tokenUrl": "<PROXY_BASE_URL>/api/oauth/token",
@@ -62,7 +62,7 @@
             "template": "ConnectedFields.Version1.Verify",
             "connectionsReference": "authentication",
             "params": {
-                "uri": "<PROXY_BASE_URL>/api/verify"
+                "uri": "<PROXY_BASE_URL>/api/connectedfields/verify"
             }
         },
         {
@@ -71,7 +71,7 @@
             "template": "DataIO.Version6.GetTypeNames",
             "connectionsReference": "authentication",
             "params": {
-                "uri": "<PROXY_BASE_URL>/api/getTypeNames"
+                "uri": "<PROXY_BASE_URL>/api/connectedfields/getTypeNames"
             }
         },
         {
@@ -80,7 +80,7 @@
             "template": "DataIO.Version6.GetTypeDefinitions",
             "connectionsReference": "authentication",
             "params": {
-                "uri": "<PROXY_BASE_URL>/api/getTypeDefinitions"
+                "uri": "<PROXY_BASE_URL>/api/connectedfields/getTypeDefinitions"
             }
         }
     ],
