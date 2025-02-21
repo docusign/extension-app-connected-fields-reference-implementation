@@ -1,5 +1,5 @@
-import VehicleDatabase from 'src/db/vehicleDatabase';
-import { VerifyResponse } from 'src/models/connectedfields';
+import VehicleDatabase from '../db/vehicleDatabase';
+import { VerifyResponse } from '../models/connectedfields';
 
 export const verifyEmail = (data: any) => {
   const errors: string[] = [];

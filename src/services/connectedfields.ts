@@ -3,7 +3,7 @@ import moment from 'moment';
 import { ClassDeclaration, ConceptDeclaration, ModelManager } from '@accordproject/concerto-core';
 import path from 'path';
 import { ModelManagerUtil } from '../utils/modelManagerUtil';
-import { GetTypeDefinitionsBody, GetTypeNamesBody, TypeNameInfo, VerifyBody } from 'src/models/connectedfields';
+import { GetTypeDefinitionsBody, GetTypeNamesBody, TypeNameInfo, VerifyBody } from '../models/connectedfields';
 import {
   verifyEmail,
   verifyPhoneNumber,
@@ -13,9 +13,9 @@ import {
   verifySSN,
   verifyBusinessEntity,
   verifyVehicleIdentification,
-} from 'src/utils/dataVerification';
+} from '../utils/dataVerification';
 import { DeclarationUnion, IDeclaration } from '@accordproject/concerto-types';
-import VehicleDatabase from 'src/db/vehicleDatabase';
+import VehicleDatabase from '../db/vehicleDatabase';
 
 enum DECORATOR_NAMES {
   TERM = 'Term',

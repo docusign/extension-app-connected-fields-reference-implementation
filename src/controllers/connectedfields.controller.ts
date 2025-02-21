@@ -9,8 +9,8 @@ import {
   connectedFieldsGetTypeDefinitionsRecordBody,
   connectedFieldsGetTypeNamesRecordBody,
   connectedFieldsVerifyBody,
-} from 'src/validationSchemas/connectedfields';
-import { getTypeDefinitions, getTypeNames, verify } from 'src/services/connectedfields';
+} from '../validationSchemas/connectedfields';
+import { getTypeDefinitions, getTypeNames, verify } from '../services/connectedfields';
 
 const connectedFieldsRouter = Router();
 
