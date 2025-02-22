@@ -71,7 +71,7 @@ concept VerifyBankAccountInput {
 
     @IsRequiredForVerifyingType
     @Term("Routing Number")
-    o String routingNumber regex=/^\\d{9}$/
+    o String routingNumber regex=/^[0-9a-zA-Z]+$/
 }
 
 @VerifiableType
@@ -87,7 +87,7 @@ concept VerifyBankAccountOwnerInput {
 
     @IsRequiredForVerifyingType
     @Term("Routing Number")
-    o String routingNumber regex=/^\\d{9}$/
+    o String routingNumber regex=/^[0-9a-zA-Z]+$/
 
     @IsRequiredForVerifyingType
     @Term("First Name")

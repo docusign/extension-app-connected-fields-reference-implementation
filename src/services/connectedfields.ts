@@ -1,6 +1,5 @@
 import { IReq, IRes } from '../utils/types';
-import moment from 'moment';
-import { ClassDeclaration, ConceptDeclaration, ModelManager } from '@accordproject/concerto-core';
+import { ConceptDeclaration, ModelManager } from '@accordproject/concerto-core';
 import path from 'path';
 import { ModelManagerUtil } from '../utils/modelManagerUtil';
 import { GetTypeDefinitionsBody, GetTypeNamesBody, TypeNameInfo, VerifyBody } from '../models/connectedfields';
@@ -14,7 +13,6 @@ import {
   verifyBusinessEntity,
   verifyVehicleIdentification,
 } from '../utils/dataVerification';
-import { DeclarationUnion, IDeclaration } from '@accordproject/concerto-types';
 import VehicleDatabase from '../db/vehicleDatabase';
 
 enum DECORATOR_NAMES {
@@ -51,16 +49,9 @@ const generateErrorResponse = (message: string, code: string): ErrorResponse => 
  */
 const MODEL_MANAGER: ModelManager = ModelManagerUtil.createModelManagerFromCTO(path.join(__dirname, '../dataModel/model.cto'));
 const CONCEPTS: ConceptDeclaration[] = MODEL_MANAGER.getConceptDeclarations();
-const DECLARATIONS: DeclarationUnion[] = MODEL_MANAGER.getModelFile('org.example@1.0.0')
+const DECLARATIONS = MODEL_MANAGER.getModelFile('org.example@1.0.0')
   .getAllDeclarations()
-  .map((decl: ClassDeclaration) => {
-    const ast = decl.ast;
-    if (typeof ast === 'object' && 'name' in ast) {
-      return ast as IDeclaration;
-    }
-
-    throw new TypeError('Unexpected type for declaration object');
-  });
+  .map(decl => decl.ast);
 
 /**
  * Database for vehicles.
