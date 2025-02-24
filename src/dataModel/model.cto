@@ -98,14 +98,12 @@ concept VerifyBankAccountOwnerInput {
     o String lastName
 }
 
-scalar SSN extends String regex=/^(?!(000|666|9))[0-9]{3}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$/
-
 @VerifiableType
 @Term("Social Security Number")
 concept VerifySocialSecurityNumberInput {
     @IsRequiredForVerifyingType
-    @Term("Social Security Number")
-    o SSN socialSecurityNumber
+    @Term("SSN")
+    o String ssn
 
     @IsRequiredForVerifyingType
     @Term("First Name")
