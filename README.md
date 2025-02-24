@@ -149,4 +149,5 @@ Running the test should return the following properties in the response `{ "succ
 
 Example:
 
+![Screenshot 2025-02-24 at 9 53 20 AM](https://github.com/user-attachments/assets/f422c219-3a78-4eea-8896-bdf985a1728f)
 
