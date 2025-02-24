@@ -120,8 +120,6 @@ The Developer Console offers five extension tests to verify that a connected fie
 **Note:** These instructions only apply if you use the [mock data](https://github.com/docusign/extension-app-data-io-reference-implementation/blob/main/src/db/fileDB.ts) in the reference implementation. If you use your own database, you’ll need to construct your requests based on your own schema. Queries for extension tests in the Developer Console are built using [IQuery](https://developers.docusign.com/extension-apps/extension-app-reference/extension-contracts/custom-query-language/) structure. 
 
 
-
-
 #### Verify extension test
 The `typeName` property in the sample input maps to the name of a concept in the `model.cto` file. Any valid record ID can be used in this field.
 

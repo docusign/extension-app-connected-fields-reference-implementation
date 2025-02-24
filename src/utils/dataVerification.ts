@@ -165,12 +165,6 @@ export const verifySSN = (data: any) => {
     }
   }
 
-  if (data.dateOfBirth) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.dateOfBirth)) {
-      errors.push('Date of birth must follow the format yyyy-MM-dd.');
-    }
-  }
-
   return generateResult(errors, 'SSN verification completed.');
 };
 
