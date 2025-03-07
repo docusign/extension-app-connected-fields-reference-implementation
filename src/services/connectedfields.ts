@@ -7,14 +7,9 @@ import {
   verifyAddress,
   verifyPhoneNumber,
   verifyEmailAddress,
-  verifyOwnerInformation,
-  verifySpouseInformation,
-  verifyFundPlan,
-  verifyBeneficiaryInformation,
-  verifyTrustedContactInformation,
-  verifyTRowePriceAccount,
-  verifyPayeeInformation,
-  verifyW4RPersonInformation,
+  verifyBusinessDetails,
+  verifyAdministrator,
+  verifyCompanyDirector,
 } from '../utils/dataVerification';
 import VehicleDatabase from '../db/vehicleDatabase';
 
@@ -51,7 +46,7 @@ const generateErrorResponse = (message: string, code: string): ErrorResponse => 
  * Model manager allowes users to load in CTO files and use Concerto model features directly in code.
  */
 const MODEL_MANAGER: ModelManager = ModelManagerUtil.createModelManagerFromCTO(path.join(__dirname, '../dataModel/model.cto'));
-const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example.tallyusa@1.0.0');
+const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example.tallyaustralia@1.0.0');
 const CONCEPTS: ConceptDeclaration[] = MODEL_MANAGER.getConceptDeclarations();
 const DECLARATIONS = MODEL_FILE.getAllDeclarations().map(decl => decl.ast);
 
@@ -120,28 +115,18 @@ export const verify = (req: IReq<VerifyBody>, res: IRes): IRes => {
   }
   try {
     switch (typeName) {
-      case 'PostalAddress':
+      case 'PostalAddressAus':
         return res.status(200).json(verifyAddress(data)).send();
       case 'PhoneNumber':
         return res.status(200).json(verifyPhoneNumber(data)).send();
       case 'EmailAddress':
         return res.status(200).json(verifyEmailAddress(data)).send();
-      case 'OwnerInformation':
-        return res.status(200).json(verifyOwnerInformation(data)).send();
-      case 'SpouseInformation':
-        return res.status(200).json(verifySpouseInformation(data)).send();
-      case 'FundPlan':
-        return res.status(200).json(verifyFundPlan(data)).send();
-      case 'BeneficiaryInformation':
-        return res.status(200).json(verifyBeneficiaryInformation(data)).send();
-      case 'TrustedContactInformation':
-        return res.status(200).json(verifyTrustedContactInformation(data)).send();
-      case 'TRowePriceAccount':
-        return res.status(200).json(verifyTRowePriceAccount(data)).send();
-      case 'PayeeInformation':
-        return res.status(200).json(verifyPayeeInformation(data)).send();
-      case 'W4RPersonInformation':
-        return res.status(200).json(verifyW4RPersonInformation(data)).send();
+      case 'BusinessDetails':
+        return res.status(200).json(verifyBusinessDetails(data)).send();
+      case 'Administrator':
+        return res.status(200).json(verifyAdministrator(data)).send();
+      case 'CompanyDirector':
+        return res.status(200).json(verifyCompanyDirector(data)).send();
       default:
         return res
           .status(400)

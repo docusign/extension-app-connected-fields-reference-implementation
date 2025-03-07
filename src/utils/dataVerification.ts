@@ -33,12 +33,6 @@ export const verifyAddress = (data: any) => {
     }
   }
 
-  if (data.postalCode) {
-    if (!/^[0-9]{5,10}$/.test(data.postalCode)) {
-      errors.push('Postal code must contain 5-10 digits.');
-    }
-  }
-
   return generateResult(errors, 'Postal address verification completed.');
 };
 
@@ -75,152 +69,85 @@ export const verifyEmailAddress = (data: any) => {
   return generateResult(errors, 'Email verification completed.');
 };
 
-export const verifyOwnerInformation = (data: any) => {
+export const verifyBusinessDetails = (data: any) => {
   const errors: string[] = [];
 
-  const addressResult = verifyAddress(data.address);
-  const phoneResult = verifyPhoneNumber(data.phone || {});
-  const emailResult = verifyEmailAddress(data.email || {});
+  const addressResult = verifyAddress(data.businessAddress);
+  const emailResult = verifyEmailAddress(data.businessEmail);
+  const phoneResult = verifyPhoneNumber(data.businessPhone);
+
+  const isValidName = data.businessName?.startsWith('A') && data.businessName?.length >= 3;
+  const isValidAbn = /^[0-9]{11}$/.test(data.businessABN || '');
+  const isValidAddress = addressResult.verified && data.businessAddress?.countryOrRegion?.toLowerCase()?.startsWith('au');
+  const isValidAccountName = data.billingAccountName?.startsWith('B') && data.billingAccountName?.length >= 3;
+  const isValidBillingAccountBSB = /^[0-9]{6}$/.test(data.billingAccountBSB || '');
+  const isValidAccountNumber = /^[0-9]{9}$/.test(data.billingAccountNumber || '');
+  const isValidEmail = emailResult.verified;
+  const isValidPhone = phoneResult.verified;
 
   const isError =
-    data.firstName !== 'Jane' ||
-    data.lastName !== 'Iam' ||
-    data.dateOfBirth !== '01-01-1970' ||
-    data.socialSecurityNumber !== '123-45-6789' ||
-    !addressResult.verified ||
-    !phoneResult.verified ||
-    !emailResult.verified;
+    !isValidName ||
+    !isValidAbn ||
+    !isValidAddress ||
+    !isValidAccountName ||
+    !isValidBillingAccountBSB ||
+    !isValidAccountNumber ||
+    !isValidEmail ||
+    !isValidPhone;
 
-  if (!addressResult.verified) {
-    errors.push(addressResult.verifyFailureReason || 'Address verification failed.');
-  } else if (!phoneResult.verified) {
-    errors.push(phoneResult.verifyFailureReason || 'Phone number verification failed.');
-  } else if (!emailResult.verified) {
-    errors.push(emailResult.verifyFailureReason || 'Email verification failed.');
+  if (!isValidAddress) {
+    errors.push(addressResult.verifyFailureReason || 'Failed to verify business address.');
+  } else if (!isValidEmail) {
+    errors.push(emailResult.verifyFailureReason || 'Failed to verify business email.');
+  } else if (!isValidPhone) {
+    errors.push(phoneResult.verifyFailureReason || 'Failed to verify business phone number.');
   } else if (isError) {
-    errors.push('We could not verify your Owner Information. Please review your entry.');
+    errors.push('We could not verify your Business Details. Please review your entry.');
   }
 
-  let suggestions: object[] = [];
+  const suggestions: object[] = [];
   if (!isError) {
-    // Mock logic to autofill on success
-    let autofilled = Boolean(data.phone) || Boolean(data.email);
-    if (data.phone) {
-      data.phone.countryCode = '1';
-      data.phone.phoneNumber = '212-596-1628';
-    }
-    if (data.email) {
-      data.email.email = 'jane@customer.com';
-    }
-
-    if (autofilled) {
-      suggestions.push(data);
-    }
+    data.businessAddress.street1 = 'Level 6, Quay West Building, 111 Harrington Street';
+    data.businessAddress.locality = 'Sydney';
+    data.businessAddress.subdivision = 'NSW';
+    data.businessAddress.countryOrRegion = 'Australia';
+    data.businessAddress.postalCode = '2000';
+    suggestions.push(data);
   }
 
-  return generateResult(errors, 'Owner Information verified.', suggestions);
+  return generateResult(errors, 'Business Details verified.', suggestions);
 };
 
-export const verifySpouseInformation = (data: any) => {
-  const errors: string[] = [];
-  const isError =
-    data.firstName !== 'Dominique' || data.lastName !== 'Iam' || data.dateOfBirth !== '07-02-1990' || data.socialSecurityNumber !== '321-45-1234';
-
-  if (isError) {
-    errors.push('We could not verify your Spouse Information. Please review your entry.');
-  }
-
-  return generateResult(errors, 'Spouse Information verified.');
-};
-
-export const verifyFundPlan = (data: any) => {
-  const errors: string[] = [];
-  const isError = data.fundName !== 'Example Fund II' || data.planId !== '12345-SC';
-
-  if (isError) {
-    errors.push('We could not verify your Fund Plan information. Please review your entry.');
-  }
-
-  return generateResult(errors, 'Fund Plan verified.');
-};
-
-export const verifyBeneficiaryInformation = (data: any) => {
+export const verifyAdministrator = (data: any) => {
   const errors: string[] = [];
 
-  const addressResult = verifyAddress(data.residentialAddress);
-
-  const isError =
-    data.name !== 'Lin Iam' || data.originalOwner !== 'Joan Iam' || data.originalOwnerDateOfBirth !== '10-04-2000' || !addressResult.verified;
-
-  if (!addressResult.verified) {
-    errors.push(addressResult.verifyFailureReason || 'Address verification failed');
-  } else if (isError) {
-    errors.push('We could not verify your Beneficiary Name information. Please review your entry.');
-  }
-
-  return generateResult(errors, 'Beneficiary Information verified.');
-};
-
-export const verifyTrustedContactInformation = (data: any) => {
-  const errors: string[] = [];
-
-  const addressResult = verifyAddress(data.address || {});
-  const phoneResult = verifyPhoneNumber(data.phone);
   const emailResult = verifyEmailAddress(data.email);
+  const phoneResult = verifyPhoneNumber(data.phone);
 
-  const isError =
-    data.firstName !== 'Dana' ||
-    data.lastName !== 'Wrong' ||
-    data.relationship !== 'Friend' ||
-    !emailResult.verified ||
-    !phoneResult.verified ||
-    !addressResult.verified;
+  const isError = data.firstName !== 'Dominique' || data.lastName !== 'Iam' || !emailResult.verified || !phoneResult.verified;
 
-  if (!addressResult.verified) {
-    errors.push(addressResult.verifyFailureReason || 'Address verification failed.');
+  if (!emailResult.verified) {
+    errors.push(emailResult.verifyFailureReason || 'Failed to verify administrator email.');
   } else if (!phoneResult.verified) {
-    errors.push(phoneResult.verifyFailureReason || 'Phone number verification failed.');
-  } else if (!emailResult.verified) {
-    errors.push(emailResult.verifyFailureReason || 'Email verification failed.');
+    errors.push(phoneResult.verifyFailureReason || 'Failed to verify administrator phone number.');
   } else if (isError) {
-    errors.push(`The Trusted Contact doesn't match our records for this account.`);
+    errors.push('We could not verify your Administor(s) registration information. Please review your entry.');
   }
 
-  return generateResult(errors, 'Success! Trusted Contact verified.');
+  return generateResult(errors, 'Administor(s) registration verified.');
 };
 
-export const verifyTRowePriceAccount = (data: any) => {
+export const verifyCompanyDirector = (data: any) => {
   const errors: string[] = [];
-  const isError = data.accountNumber !== '10987654321' || data.fundName !== 'Example Fund III';
 
-  if (isError) {
-    errors.push('We could not verify your Tally US Account. Please review your entry.');
-  }
-
-  return generateResult(errors, 'Success! Tally US Account verified.');
-};
-
-export const verifyPayeeInformation = (data: any) => {
-  const errors: string[] = [];
-  const isError = data.payeeName !== 'Example Payee' || data.accountNumber !== '12345678' || data.accountOrPlanType !== 'Example Plan Type';
-
-  if (isError) {
-    errors.push('We could not verify your Account Number. Please review your entry.');
-  }
-
-  return generateResult(errors, 'Payee account verified.');
-};
-
-export const verifyW4RPersonInformation = (data: any) => {
-  const errors: string[] = [];
   const isError =
-    data.firstName !== 'Jane' || data.lastName !== 'Iam' || data.socialSecurityNumber !== '123-45-6789' || data.dateOfBirth !== '01-01-1970';
+    data.name !== 'Daniel Director' || data.position !== 'CEO' || data.customerNumber !== '123456' || !/^036\d{11}\d$/.test(data.directorId);
 
   if (isError) {
-    errors.push('IRS Person Information failed verification. Please review your entry.');
+    errors.push('We could not verify your Business Network Owner information. Please review your entry.');
   }
 
-  return generateResult(errors, 'IRS Person Information verified.');
+  return generateResult(errors, 'Business Network Owner verified.');
 };
 
 const generateResult = (errors: string[], successMessage: string, suggestions?: object[]): VerifyResponse => {

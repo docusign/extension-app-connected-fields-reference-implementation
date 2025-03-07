@@ -1,255 +1,151 @@
-namespace org.example.tallyusa@1.0.0
+namespace org.example.tallyaustralia@1.0.0
 
 /**
- * PostalAddress – a standard address.
+ * Postal Address – a standard Australian address.
  */
 @VerifiableType
-@Term("Address")
-concept PostalAddress {
+@Term('Address')
+concept PostalAddressAus {
   @IsRequiredForVerifyingType
-  @Term("Address Line 1")
+  @Term('Address Line 1')
   o String street1
 
-  @Term("Address Line 2")
+  @Term('Address Line 2')
   o String street2 optional
 
   @IsRequiredForVerifyingType
-  @Term("City or Town")
+  @Term('City or Town')
   o String locality
 
   @IsRequiredForVerifyingType
-  @Term("State")
+  @Term('State')
   o String subdivision
 
   @IsRequiredForVerifyingType
-  @Term("Country or Region")
+  @Term('Country or Region')
   o String countryOrRegion
 
   @IsRequiredForVerifyingType
-  @Term("ZIP Code")
-  o String postalCode
+  @Term('Postcode')
+  o String postalCode regex=/^(0[289][0-9]{2})|([123456789][0-9]{3})$/
 }
 
 /**
- * PhoneNumber – a standard phone number.
+ * Phone Number – a standard phone number.
  */
 @VerifiableType
-@Term("Phone Number")
+@Term('Phone Number')
 concept PhoneNumber {
   @IsRequiredForVerifyingType
-  @Term("Country Code")
+  @Term('Country Code')
   o String countryCode regex=/^(\+?\(?\d{1,6}\)?|\(\+\d{1,6}\)|\d{1,2}-?\d{3})$/ length=[0, 7]
 
   @IsRequiredForVerifyingType
-  @Term("Phone Number")
+  @Term('Phone Number')
   o String phoneNumber regex=/^[0-9 \(\)-]+$/ length=[0, 20]
 }
 
 /**
- * EmailAddress – a standard email address.
+ * Email Address – a standard email address.
  */
 @VerifiableType
-@Term("Email Address")
+@Term('Email Address')
 concept EmailAddress {
   @IsRequiredForVerifyingType
-  @Term("Email Address")
+  @Term('Email Address')
   o String email length=[,256]
 }
 
 /**
- * Owner Information – details for the plan owner.
+ * Business Details
  */
 @VerifiableType
-@Term("Owner Information")
-concept OwnerInformation {
+@Term('Business Details')
+concept BusinessDetails {
   @IsRequiredForVerifyingType
-  @Term("Owner First Name")
+  @Term('Business Name')
+  o String businessName
+
+  @Term('Business ABN')
+  o String businessABN regex=/\d{11}/
+
+  @IsRequiredForVerifyingType
+  @Term('Customer Number')
+  o String customerNumber
+
+  @IsRequiredForVerifyingType
+  @Term('Business Phone')
+  o PhoneNumber businessPhone
+
+  @IsRequiredForVerifyingType
+  @Term('Business Email')
+  o EmailAddress businessEmail
+
+  @IsRequiredForVerifyingType
+  @Term('Business Address')
+  o PostalAddressAus businessAddress
+
+  @IsRequiredForVerifyingType
+  @Term('Billing Account Name')
+  o String billingAccountName
+
+  @IsRequiredForVerifyingType
+  @Term('Billing Account BSB')
+  o String billingAccountBSB
+
+  @IsRequiredForVerifyingType
+  @Term('Billing Account Number')
+  o String billingAccountNumber
+}
+
+/**
+ * Administrator
+ */
+@VerifiableType
+@Term('Administrator')
+concept Administrator {
+  @IsRequiredForVerifyingType
+  @Term('Administrator First Name')
   o String firstName
 
   @IsRequiredForVerifyingType
-  @Term("Owner Last Name")
+  @Term('Administrator Last Name')
   o String lastName
 
   @IsRequiredForVerifyingType
-  @Term("Owner Date of Birth")
-  o DateTime dateOfBirth
+  @Term('Administrator Email')
+  o EmailAddress email
 
   @IsRequiredForVerifyingType
-  @Term("Owner SSN")
-  o String socialSecurityNumber
+  @Term('Administrator Phone')
+  o PhoneNumber phone
 
-  @IsRequiredForVerifyingType
-  @Term("Owner Address")
-  o PostalAddress address
-
-  @IsRequiredForVerifyingType
-  @Term("Owner Phone Number")
-  o PhoneNumber phone optional
-
-  @IsRequiredForVerifyingType
-  @Term("Owner Email")
-  o EmailAddress email optional
+  @Term('Administrator Title')
+  o String title optional
 }
 
 /**
- * Spouse Information – details for the plan owner's spouse.
+ * Company Director
  */
 @VerifiableType
-@Term("Spouse Information")
-concept SpouseInformation {
+@Term('Company Director')
+concept CompanyDirector {
   @IsRequiredForVerifyingType
-  @Term("Spouse First Name")
-  o String firstName
-
-  @IsRequiredForVerifyingType
-  @Term("Spouse Last Name")
-  o String lastName
-
-  @IsRequiredForVerifyingType
-  @Term("Spouse Date of Birth")
-  o DateTime dateOfBirth
-
-  @IsRequiredForVerifyingType
-  @Term("Spouse SSN")
-  o String socialSecurityNumber
-
-  o PostalAddress address optional
-  o PhoneNumber phone optional
-  o EmailAddress email optional
-}
-
-/**
- * Fund Plan – contains the Fund Name and Plan ID.
- */
-@VerifiableType
-@Term("Fund Plan")
-concept FundPlan {
-  @IsRequiredForVerifyingType
-  @Term("Fund Name")
-  o String fundName
-
-  @IsRequiredForVerifyingType
-  @Term("Plan ID")
-  o String planId
-}
-
-/**
- * Beneficiary Information – details about a beneficiary.
- * - Name is captured in a single field.
- * - Includes Residential Address and Original Owner Date of Birth.
- * - The relationship field is optional.
- */
-@VerifiableType
-@Term("Beneficiary Information")
-concept BeneficiaryInformation {
-  @IsRequiredForVerifyingType
-  @Term("Beneficiary Name")
+  @Term('Name')
   o String name
 
   @IsRequiredForVerifyingType
-  @Term("Original Owner")
-  o String originalOwner 
+  @Term('Position')
+  o String position
 
   @IsRequiredForVerifyingType
-  @Term("Beneficiary Residential Address")
-  o PostalAddress residentialAddress
+  @Term('Customer Number')
+  o String customerNumber
 
   @IsRequiredForVerifyingType
-  @Term("Original Owner Date of Birth")
-  o DateTime originalOwnerDateOfBirth
+  @Term('Director ID')
+  o String directorId regex=/^036\d{11}\d$/
 
-  @Term("Beneficiary Relationship")
-  o String relationship optional
-}
-
-/**
- * Trusted Contact Information – details for a trusted contact.
- * Includes an optional embedded address.
- */
-@VerifiableType
-@Term("Trusted Contact Information")
-concept TrustedContactInformation {
-  @IsRequiredForVerifyingType
-  @Term("Trusted Contact First Name")
-  o String firstName
-
-  @IsRequiredForVerifyingType
-  @Term("Trusted Contact Last Name")
-  o String lastName
-
-  @IsRequiredForVerifyingType
-  @Term("Trusted Contact Relationship")
-  o String relationship
-
-  @IsRequiredForVerifyingType
-  @Term("Trusted Contact Phone Number")
-  o PhoneNumber phone
-
-  @IsRequiredForVerifyingType
-  @Term("Trusted Contact Email")
-  o EmailAddress email
-
-  @Term("Trusted Contact Address")
-  o PostalAddress address optional
-}
-
-/**
- * Tally US Account – account details at Tally US.
- */
-@VerifiableType
-@Term("Tally US Account")
-concept TRowePriceAccount {
-  @IsRequiredForVerifyingType
-  @Term("Account Number")
-  o String accountNumber
-
-  @IsRequiredForVerifyingType
-  @Term("Fund Name")
-  o String fundName
-}
-
-/**
- * Payee Information – details for the payee.
- * Includes:
- * - Payee Name
- * - Account Number
- * - Account/Plan Type
- */
-@VerifiableType
-@Term("Payee Information")
-concept PayeeInformation {
-  @IsRequiredForVerifyingType
-  @Term("Payee Name")
-  o String payeeName
-
-  @IsRequiredForVerifyingType
-  @Term("Account Number")
-  o String accountNumber
-
-  @IsRequiredForVerifyingType
-  @Term("Account/Plan Type")
-  o String accountOrPlanType
-}
-
-/**
- * W-4R Person Information – withholding information.
- */
-@VerifiableType
-@Term("W-4R Person Information")
-concept W4RPersonInformation {
-  @IsRequiredForVerifyingType
-  @Term("W-4R First Name")
-  o String firstName
-
-  @IsRequiredForVerifyingType
-  @Term("W-4R Last Name")
-  o String lastName
-  
-  @IsRequiredForVerifyingType
-  @Term("W-4R SSN")
-  o String socialSecurityNumber
-
-  @IsRequiredForVerifyingType
-  @Term("W-4R Date of Birth")
-  o DateTime dateOfBirth
+  @Term('Business Name')
+  o String businessName optional
 }
