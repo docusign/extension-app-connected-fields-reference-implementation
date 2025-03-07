@@ -4,14 +4,17 @@ import path from 'path';
 import { ModelManagerUtil } from '../utils/modelManagerUtil';
 import { GetTypeDefinitionsBody, GetTypeNamesBody, TypeNameInfo, VerifyBody } from '../models/connectedfields';
 import {
-  verifyEmail,
+  verifyAddress,
   verifyPhoneNumber,
-  verifyPostalAddress,
-  verifyBankAccount,
-  verifyBankAccountOwner,
-  verifySSN,
-  verifyBusinessEntity,
-  verifyVehicleIdentification,
+  verifyEmailAddress,
+  verifyOwnerInformation,
+  verifySpouseInformation,
+  verifyFundPlan,
+  verifyBeneficiaryInformation,
+  verifyTrustedContactInformation,
+  verifyTRowePriceAccount,
+  verifyPayeeInformation,
+  verifyW4RPersonInformation,
 } from '../utils/dataVerification';
 import VehicleDatabase from '../db/vehicleDatabase';
 
@@ -48,7 +51,7 @@ const generateErrorResponse = (message: string, code: string): ErrorResponse => 
  * Model manager allowes users to load in CTO files and use Concerto model features directly in code.
  */
 const MODEL_MANAGER: ModelManager = ModelManagerUtil.createModelManagerFromCTO(path.join(__dirname, '../dataModel/model.cto'));
-const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example@1.0.0');
+const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example.tallyusa@1.0.0');
 const CONCEPTS: ConceptDeclaration[] = MODEL_MANAGER.getConceptDeclarations();
 const DECLARATIONS = MODEL_FILE.getAllDeclarations().map(decl => decl.ast);
 
@@ -91,7 +94,7 @@ export const getTypeDefinitions = (req: IReq<GetTypeDefinitionsBody>, res: IRes)
   MODEL_MANAGER.addCTOModel;
   try {
     return res.json({
-      declarations: DECLARATIONS
+      declarations: DECLARATIONS,
     });
   } catch (err) {
     console.log(`Encountered an error getting type definitions: ${err.message}`);
@@ -117,22 +120,28 @@ export const verify = (req: IReq<VerifyBody>, res: IRes): IRes => {
   }
   try {
     switch (typeName) {
-      case 'VerifyEmailInput':
-        return res.status(200).json(verifyEmail(data)).send();
-      case 'VerifyPhoneNumberInput':
-        return res.status(200).json(verifyPhoneNumber(data)).send();
       case 'PostalAddress':
-        return res.status(200).json(verifyPostalAddress(data)).send();
-      case 'VerifyBankAccountInput':
-        return res.status(200).json(verifyBankAccount(data)).send();
-      case 'VerifyBankAccountOwnerInput':
-        return res.status(200).json(verifyBankAccountOwner(data)).send();
-      case 'VerifySocialSecurityNumberInput':
-        return res.status(200).json(verifySSN(data)).send();
-      case 'VerifyBusinessEntityInput':
-        return res.status(200).json(verifyBusinessEntity(data)).send();
-      case 'VehicleIdentification':
-        return res.status(200).json(verifyVehicleIdentification(data, VEHICLE_DB)).send();
+        return res.status(200).json(verifyAddress(data)).send();
+      case 'PhoneNumber':
+        return res.status(200).json(verifyPhoneNumber(data)).send();
+      case 'EmailAddress':
+        return res.status(200).json(verifyEmailAddress(data)).send();
+      case 'OwnerInformation':
+        return res.status(200).json(verifyOwnerInformation(data)).send();
+      case 'SpouseInformation':
+        return res.status(200).json(verifySpouseInformation(data)).send();
+      case 'FundPlan':
+        return res.status(200).json(verifyFundPlan(data)).send();
+      case 'BeneficiaryInformation':
+        return res.status(200).json(verifyBeneficiaryInformation(data)).send();
+      case 'TrustedContactInformation':
+        return res.status(200).json(verifyTrustedContactInformation(data)).send();
+      case 'TRowePriceAccount':
+        return res.status(200).json(verifyTRowePriceAccount(data)).send();
+      case 'PayeeInformation':
+        return res.status(200).json(verifyPayeeInformation(data)).send();
+      case 'W4RPersonInformation':
+        return res.status(200).json(verifyW4RPersonInformation(data)).send();
       default:
         return res
           .status(400)

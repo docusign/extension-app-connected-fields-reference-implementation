@@ -1,50 +1,11 @@
-import VehicleDatabase from '../db/vehicleDatabase';
 import { VerifyResponse } from '../models/connectedfields';
 
-export const verifyEmail = (data: any) => {
-  const errors: string[] = [];
-  if (data.email) {
-    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    if (!emailRegex.test(data.email)) {
-      errors.push('Invalid email format. Provide a valid email like user@domain.com.');
-    }
-  }
-
-  return generateResult(errors, 'Email verification completed.');
-};
-
-export const verifyPhoneNumber = (data: any) => {
-  const errors: string[] = [];
-  if (data.countryCode) {
-    const countryCodeRegex = /^(\+?\(?\d{1,6}\)?|\(\+\d{1,6}\)|\d{1,2}-?\d{3})$/;
-    if (!countryCodeRegex.test(data.countryCode)) {
-      errors.push('Invalid country code format.');
-    }
-  }
-
-  if (data.phoneNumber) {
-    const phoneNumberRegex = /^[0-9 ()-]+$/;
-    if (!phoneNumberRegex.test(data.phoneNumber)) {
-      errors.push('Invalid phone number format.');
-    }
-  }
-
-  return generateResult(errors, 'Phone number verification completed.');
-};
-
-export const verifyPostalAddress = (data: any) => {
+export const verifyAddress = (data: any) => {
   const errors: string[] = [];
 
   if (data.street1) {
     if (data.street1.length > 100) {
       errors.push('Address Line 1 must be less than 100 characters.');
-    } else {
-      // Testing the autofill scenario
-      if (data.street1.toString().toLowerCase().includes("221 main st") && data.postalCode?.toString() !== "94105") {
-        const suggestions = [{ postalCode: "94105" }];
-        const failureMessage = "Invalid postal code. A suggestion for postal code was autofilled. Please verify again."
-        return generateFailedResultWithSuggestions(suggestions, failureMessage);
-      }
     }
   }
 
@@ -81,143 +42,195 @@ export const verifyPostalAddress = (data: any) => {
   return generateResult(errors, 'Postal address verification completed.');
 };
 
-export const verifyBankAccount = (data: any) => {
+export const verifyPhoneNumber = (data: any) => {
   const errors: string[] = [];
 
-  if (data.accountNumber) {
-    if (!/^[0-9a-zA-Z]+$/.test(data.accountNumber)) {
-      errors.push('Account number must be alphanumeric.');
+  if (data.countryCode) {
+    const countryCodeRegex = /^(\+?\(?\d{1,6}\)?|\(\+\d{1,6}\)|\d{1,2}-?\d{3})$/;
+    if (!countryCodeRegex.test(data.countryCode)) {
+      errors.push('Invalid country code format.');
     }
   }
 
-  if (data.accountType) {
-    const validAccountTypes = ['checking', 'savings'];
-    if (!validAccountTypes.includes(data.accountType)) {
-      errors.push('Account type must be either checking or savings.');
+  if (data.phoneNumber) {
+    const phoneNumberRegex = /^[0-9 ()-]+$/;
+    if (!phoneNumberRegex.test(data.phoneNumber)) {
+      errors.push('Invalid phone number format.');
     }
   }
 
-  if (data.routingNumber) {
-    if (!/^\d{9}$/.test(data.routingNumber)) {
-      errors.push('Routing number must be exactly 9 digits.');
-    }
-  }
-
-  return generateResult(errors, 'Bank account verification completed.');
+  return generateResult(errors, 'Phone number verification completed.');
 };
 
-export const verifyBankAccountOwner = (data: any) => {
+export const verifyEmailAddress = (data: any) => {
   const errors: string[] = [];
 
-  if (data.accountNumber) {
-    if (!/^[0-9a-zA-Z]+$/.test(data.accountNumber)) {
-      errors.push('Account number must be alphanumeric.');
+  if (data.email) {
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (!emailRegex.test(data.email)) {
+      errors.push('Invalid email format. Provide a valid email like user@domain.com.');
     }
   }
 
-  if (data.accountType) {
-    const validAccountTypes = ['checking', 'savings'];
-    if (!validAccountTypes.includes(data.accountType)) {
-      errors.push('Account type must be either checking or savings.');
-    }
-  }
-
-  if (data.routingNumber) {
-    if (!/^\d{9}$/.test(data.routingNumber)) {
-      errors.push('Routing number must be exactly 9 digits.');
-    }
-  }
-
-  if (data.firstName) {
-    if (!/^[a-zA-Z]+$/.test(data.firstName)) {
-      errors.push('First name must contain only letters.');
-    }
-  }
-
-  if (data.lastName) {
-    if (!/^[a-zA-Z]+$/.test(data.lastName)) {
-      errors.push('Last name must contain only letters.');
-    }
-  }
-
-  return generateResult(errors, 'Bank account owner verification completed.');
+  return generateResult(errors, 'Email verification completed.');
 };
 
-export const verifySSN = (data: any) => {
+export const verifyOwnerInformation = (data: any) => {
   const errors: string[] = [];
 
-  if (data.socialSecurityNumber) {
-    const ssnRegex = /^(?!(000|666|9))[0-9]{3}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$/;
-    if (!ssnRegex.test(data.socialSecurityNumber)) {
-      errors.push('Invalid SSN format. Use the XXX-XX-XXXX format.');
+  const addressResult = verifyAddress(data.address);
+  const phoneResult = verifyPhoneNumber(data.phone || {});
+  const emailResult = verifyEmailAddress(data.email || {});
+
+  const isError =
+    data.firstName !== 'Jane' ||
+    data.lastName !== 'Iam' ||
+    data.dateOfBirth !== '01-01-1970' ||
+    data.socialSecurityNumber !== '123-45-6789' ||
+    !addressResult.verified ||
+    !phoneResult.verified ||
+    !emailResult.verified;
+
+  if (!addressResult.verified) {
+    errors.push(addressResult.verifyFailureReason || 'Address verification failed.');
+  } else if (!phoneResult.verified) {
+    errors.push(phoneResult.verifyFailureReason || 'Phone number verification failed.');
+  } else if (!emailResult.verified) {
+    errors.push(emailResult.verifyFailureReason || 'Email verification failed.');
+  } else if (isError) {
+    errors.push('We could not verify your Owner Information. Please review your entry.');
+  }
+
+  let suggestions: object[] = [];
+  if (!isError) {
+    // Mock logic to autofill on success
+    let autofilled = Boolean(data.phone) || Boolean(data.email);
+    if (data.phone) {
+      data.phone.countryCode = '1';
+      data.phone.phoneNumber = '212-596-1628';
+    }
+    if (data.email) {
+      data.email.email = 'jane@customer.com';
+    }
+
+    if (autofilled) {
+      suggestions.push(data);
     }
   }
 
-  if (data.firstName) {
-    if (!/^[a-zA-Z\s]+$/.test(data.firstName)) {
-      errors.push('First name must contain only letters.');
-    }
-  }
-
-  if (data.lastName) {
-    if (!/^[a-zA-Z\s]+$/.test(data.lastName)) {
-      errors.push('Last name must contain only letters.');
-    }
-  }
-
-  return generateResult(errors, 'SSN verification completed.');
+  return generateResult(errors, 'Owner Information verified.', suggestions);
 };
 
-export const verifyBusinessEntity = (data: any) => {
+export const verifySpouseInformation = (data: any) => {
+  const errors: string[] = [];
+  const isError =
+    data.firstName !== 'Dominique' || data.lastName !== 'Iam' || data.dateOfBirth !== '07-02-1990' || data.socialSecurityNumber !== '321-45-1234';
+
+  if (isError) {
+    errors.push('We could not verify your Spouse Information. Please review your entry.');
+  }
+
+  return generateResult(errors, 'Spouse Information verified.');
+};
+
+export const verifyFundPlan = (data: any) => {
+  const errors: string[] = [];
+  const isError = data.fundName !== 'Example Fund II' || data.planId !== '12345-SC';
+
+  if (isError) {
+    errors.push('We could not verify your Fund Plan information. Please review your entry.');
+  }
+
+  return generateResult(errors, 'Fund Plan verified.');
+};
+
+export const verifyBeneficiaryInformation = (data: any) => {
   const errors: string[] = [];
 
-  if (data.businessName) {
-    if (data.businessName.length > 100) {
-      errors.push('Business name must be less than 100 characters.');
-    }
+  const addressResult = verifyAddress(data.residentialAddress);
+
+  const isError =
+    data.name !== 'Lin Iam' || data.originalOwner !== 'Joan Iam' || data.originalOwnerDateOfBirth !== '10-04-2000' || !addressResult.verified;
+
+  if (!addressResult.verified) {
+    errors.push(addressResult.verifyFailureReason || 'Address verification failed');
+  } else if (isError) {
+    errors.push('We could not verify your Beneficiary Name information. Please review your entry.');
   }
 
-  if (data.fein) {
-    const feinRegex = /^\d{2}[-\s]?\d{7}$|^\d{9}$/;
-    if (!feinRegex.test(data.fein)) {
-      errors.push('Invalid FEIN format. Use XX-XXXXXXX or XXXXXXXXX.');
-    }
-  }
-
-  return generateResult(errors, 'Business entity verification completed.');
+  return generateResult(errors, 'Beneficiary Information verified.');
 };
 
-export const verifyVehicleIdentification = (data: any, vehicleDb: VehicleDatabase) => {
+export const verifyTrustedContactInformation = (data: any) => {
   const errors: string[] = [];
 
-  if (!data.vin) {
-    errors.push('VIN not provided.');
-  } else {
-    if (!data.stateOfRegistration || !data.countryOfRegistration) {
-      errors.push('State or country of registration not provided.');
-    } else {
-      const vehicle = vehicleDb.findRecord('vin', data.vin);
-      if (!vehicle) {
-        errors.push(`Could not find the vehicle with VIN ${data.vin}`);
-      } else {
-        if (vehicle.stateOfRegistration !== data.stateOfRegistration || vehicle.countryOfRegistration !== data.countryOfRegistration) {
-          errors.push('State or country of registration do not match.');
-        }
-      }
-    }
+  const addressResult = verifyAddress(data.address || {});
+  const phoneResult = verifyPhoneNumber(data.phone);
+  const emailResult = verifyEmailAddress(data.email);
+
+  const isError =
+    data.firstName !== 'Dana' ||
+    data.lastName !== 'Wrong' ||
+    data.relationship !== 'Friend' ||
+    !emailResult.verified ||
+    !phoneResult.verified ||
+    !addressResult.verified;
+
+  if (!addressResult.verified) {
+    errors.push(addressResult.verifyFailureReason || 'Address verification failed.');
+  } else if (!phoneResult.verified) {
+    errors.push(phoneResult.verifyFailureReason || 'Phone number verification failed.');
+  } else if (!emailResult.verified) {
+    errors.push(emailResult.verifyFailureReason || 'Email verification failed.');
+  } else if (isError) {
+    errors.push(`The Trusted Contact doesn't match our records for this account.`);
   }
 
-  return generateResult(errors, 'Vehicle identification verification completed.');
+  return generateResult(errors, 'Success! Trusted Contact verified.');
 };
 
-const generateResult = (errors: string[], successMessage: string): VerifyResponse => {
+export const verifyTRowePriceAccount = (data: any) => {
+  const errors: string[] = [];
+  const isError = data.accountNumber !== '10987654321' || data.fundName !== 'Example Fund III';
+
+  if (isError) {
+    errors.push('We could not verify your Tally US Account. Please review your entry.');
+  }
+
+  return generateResult(errors, 'Success! Tally US Account verified.');
+};
+
+export const verifyPayeeInformation = (data: any) => {
+  const errors: string[] = [];
+  const isError = data.payeeName !== 'Example Payee' || data.accountNumber !== '12345678' || data.accountOrPlanType !== 'Example Plan Type';
+
+  if (isError) {
+    errors.push('We could not verify your Account Number. Please review your entry.');
+  }
+
+  return generateResult(errors, 'Payee account verified.');
+};
+
+export const verifyW4RPersonInformation = (data: any) => {
+  const errors: string[] = [];
+  const isError =
+    data.firstName !== 'Jane' || data.lastName !== 'Iam' || data.socialSecurityNumber !== '123-45-6789' || data.dateOfBirth !== '01-01-1970';
+
+  if (isError) {
+    errors.push('IRS Person Information failed verification. Please review your entry.');
+  }
+
+  return generateResult(errors, 'IRS Person Information verified.');
+};
+
+const generateResult = (errors: string[], successMessage: string, suggestions?: object[]): VerifyResponse => {
   if (errors.length > 0) {
     return {
       verified: false,
       verifyResponseMessage: 'Verification failed.',
       verifyFailureReason: errors.join(' '),
       verificationResultCode: 'VALIDATION_ERRORS',
-      suggestions: errors.map(error => ({ fix: error })),
+      suggestions,
     };
   }
 
@@ -226,15 +239,6 @@ const generateResult = (errors: string[], successMessage: string): VerifyRespons
     verifyResponseMessage: successMessage,
     verificationResultCode: 'SUCCESS',
     verificationResultDescription: successMessage,
-  };
-};
-
-const generateFailedResultWithSuggestions = (suggestions: object[], failureMessage: string): VerifyResponse => {
-  return {
-    verified: false,
-    verifyResponseMessage: 'Verification failed.',
-    verifyFailureReason: failureMessage,
-    verificationResultCode: 'VALIDATION_ERRORS',
-    suggestions: suggestions
+    suggestions,
   };
 };
