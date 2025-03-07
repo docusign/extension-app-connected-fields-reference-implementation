@@ -85,7 +85,7 @@ export const verifyOwnerInformation = (data: any) => {
   const isError =
     data.firstName !== 'Jane' ||
     data.lastName !== 'Iam' ||
-    data.dateOfBirth !== '01-01-1970' ||
+    data.dateOfBirth !== '01/01/1970' ||
     data.socialSecurityNumber !== '123-45-6789' ||
     !addressResult.verified ||
     !phoneResult.verified ||
@@ -124,7 +124,7 @@ export const verifyOwnerInformation = (data: any) => {
 export const verifySpouseInformation = (data: any) => {
   const errors: string[] = [];
   const isError =
-    data.firstName !== 'Dominique' || data.lastName !== 'Iam' || data.dateOfBirth !== '07-02-1990' || data.socialSecurityNumber !== '321-45-1234';
+    data.firstName !== 'Dominique' || data.lastName !== 'Iam' || data.dateOfBirth !== '07/02/1990' || data.socialSecurityNumber !== '321-45-1234';
 
   if (isError) {
     errors.push('We could not verify your Spouse Information. Please review your entry.');
@@ -150,7 +150,7 @@ export const verifyBeneficiaryInformation = (data: any) => {
   const addressResult = verifyAddress(data.residentialAddress);
 
   const isError =
-    data.name !== 'Lin Iam' || data.originalOwner !== 'Joan Iam' || data.originalOwnerDateOfBirth !== '10-04-2000' || !addressResult.verified;
+    data.name !== 'Lin Iam' || data.originalOwner !== 'Joan Iam' || data.originalOwnerDateOfBirth !== '10/04/2000' || !addressResult.verified;
 
   if (!addressResult.verified) {
     errors.push(addressResult.verifyFailureReason || 'Address verification failed');
@@ -214,7 +214,7 @@ export const verifyPayeeInformation = (data: any) => {
 export const verifyW4RPersonInformation = (data: any) => {
   const errors: string[] = [];
   const isError =
-    data.firstName !== 'Jane' || data.lastName !== 'Iam' || data.socialSecurityNumber !== '123-45-6789' || data.dateOfBirth !== '01-01-1970';
+    data.firstName !== 'Jane' || data.lastName !== 'Iam' || data.socialSecurityNumber !== '123-45-6789' || data.dateOfBirth !== '01/01/1970';
 
   if (isError) {
     errors.push('IRS Person Information failed verification. Please review your entry.');
