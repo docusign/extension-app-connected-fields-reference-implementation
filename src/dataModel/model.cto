@@ -27,7 +27,6 @@ concept PostalAddress {
     @Term("Address Line 1")
     o String street1
 
-    @VerifiableField
     @Term("Address Line 2")
     o String street2 optional
 
