@@ -46,7 +46,7 @@ const generateErrorResponse = (message: string, code: string): ErrorResponse => 
  * Model manager allowes users to load in CTO files and use Concerto model features directly in code.
  */
 const MODEL_MANAGER: ModelManager = ModelManagerUtil.createModelManagerFromCTO(path.join(__dirname, '../dataModel/model.cto'));
-const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example.tallyaustralia@1.0.0');
+const MODEL_FILE = MODEL_MANAGER.getModelFile('org.example.fontaraaustralia@1.0.0');
 const CONCEPTS: ConceptDeclaration[] = MODEL_MANAGER.getConceptDeclarations();
 const DECLARATIONS = MODEL_FILE.getAllDeclarations().map(decl => decl.ast);
 
