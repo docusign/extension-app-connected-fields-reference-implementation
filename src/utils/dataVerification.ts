@@ -194,10 +194,10 @@ export const verifyTRowePriceAccount = (data: any) => {
   const isError = data.accountNumber !== '10987654321' || data.fundName !== 'Example Fund III';
 
   if (isError) {
-    errors.push('We could not verify your Tally US Account. Please review your entry.');
+    errors.push('We could not verify your Fontara US Account. Please review your entry.');
   }
 
-  return generateResult(errors, 'Success! Tally US Account verified.');
+  return generateResult(errors, 'Success! Fontara US Account verified.');
 };
 
 export const verifyPayeeInformation = (data: any) => {

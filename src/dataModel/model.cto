@@ -1,4 +1,4 @@
-namespace org.example.tallyusa@1.0.0
+namespace org.example.fontarausa@1.0.0
 
 /**
  * PostalAddress – a standard address.
@@ -194,10 +194,10 @@ concept TrustedContactInformation {
 }
 
 /**
- * Tally US Account – account details at Tally US.
+ * Fontara US Account – account details at Fontara US.
  */
 @VerifiableType
-@Term("Tally US Account")
+@Term("Fontara US Account")
 concept TRowePriceAccount {
   @IsRequiredForVerifyingType
   @Term("Account Number")
