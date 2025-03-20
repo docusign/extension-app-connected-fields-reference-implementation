@@ -1,6 +1,6 @@
 # Connected Fields Extension App Reference Implementation
 ## Introduction
-This reference implementation models the implementation of data input and output functionalities in an [extension app](https://developers.docusign.com/extension-apps/).
+This reference implementation models the implementation of [connected fields verification](https://developers.docusign.com/extension-apps/extension-apps-101/supported-extensions/connected-fields/) in an [extension app](https://developers.docusign.com/extension-apps/).
 
 To test this reference implementation, modify the `manifest.json` file.
 
@@ -65,7 +65,7 @@ This will start a production build on the port in the `production.env` file (por
 ## Setting up ngrok
 ### 1. [Install and configure ngrok for your machine.](https://ngrok.com/docs/getting-started/)
 ### 2. Start ngrok
-Run the following command to create a public accessible tunnel to your localhost:
+Run the following command to create a publicly accessible tunnel to your localhost:
 
 ```bash
 ngrok http <PORT>
@@ -98,54 +98,72 @@ In this example, the `Forwarding` address to copy is `https://bbd7-12-202-171-35
 ## Create an extension app
 ### 1. Prepare your app manifest
 Replace `<PROXY_BASE_URL>` in your manifest file with the ngrok forwarding address in the following sections:
-- `connections.params.customConfig.profile.url`
 - `connections.params.customConfig.tokenUrl`
 - `connections.params.customConfig.authorizationUrl`
 - `actions.params.uri`
     * Replace this value for all of the actions.
 
 ### 2. Navigate to the [Developer Console](https://devconsole.docusign.com/apps)
-Log in with your Docusign developer credentials and create a new app.
+Log in with your Docusign developer credentials. You can sign up for a free developer account [here](https://www.docusign.com/developers/sandbox).
 
 ### 3. Upload your manifest and create the connected fields app
-To [create your extension app](https://developers.docusign.com/extension-apps/build-an-extension-app/create/), open the [Developer Console](https://devconsole.docusign.com/apps) and select **+New App.** In the app manifest editor that opens, upload your manifest file or paste into the editor itself; then select Validate. Once the editor validates your manifest, select **Create App.** 
+To [create your extension app](https://developers.docusign.com/extension-apps/build-an-extension-app/create/), select **Create App > By editing the manifest**. In the app manifest editor that opens, upload your manifest file or paste into the editor itself; then select **Validate**. Once the editor validates your manifest, select **Create App.** 
 
 ### 4. Test the extension app
-This reference implementation uses mock data to simulate how data can be verified against a database. [Test your extension](https://developers.docusign.com/extension-apps/build-an-extension-app/test/) using the sample data in [fileDB.ts](https://github.com/docusign/extension-app-data-io-reference-implementation/blob/main/src/db/fileDB.ts). Extension app tests include [integration tests](https://developers.docusign.com/extension-apps/build-an-extension-app/test/integration-tests/) (connection tests and extension tests), [functional tests](https://developers.docusign.com/extension-apps/build-an-extension-app/test/functional-tests/), and [App Center preview](https://developers.docusign.com/extension-apps/build-an-extension-app/test/app-center-preview/). 
+This reference implementation uses mock data to simulate how data can be verified against a database. [Test your extension](https://developers.docusign.com/extension-apps/build-an-extension-app/test/) using the sample data in [vehicleDatabase.csv](https://github.com/docusign/extension-app-connected-fields-reference-implementation/blob/main/src/db/vehicleDatabase.csv). Extension app tests include [integration tests](https://developers.docusign.com/extension-apps/build-an-extension-app/test/integration-tests/) (connection tests and extension tests), [functional tests](https://developers.docusign.com/extension-apps/build-an-extension-app/test/functional-tests/), and [App Center preview](https://developers.docusign.com/extension-apps/build-an-extension-app/test/app-center-preview/). 
 
 
 ### Extension tests
-The Developer Console offers five extension tests to verify that a connected fields extension app can connect to and exchange data with third-party APIs (or an API proxy that in turn connects with those APIs). 
+The Developer Console offers extension tests to verify that a connected fields extension app can connect to and exchange data with third-party APIs (or an API proxy that in turn connects with those APIs). 
 
-**Note:** These instructions only apply if you use the [mock data](https://github.com/docusign/extension-app-data-io-reference-implementation/blob/main/src/db/fileDB.ts) in the reference implementation. If you use your own database, you’ll need to construct your requests based on your own schema. Queries for extension tests in the Developer Console are built using [IQuery](https://developers.docusign.com/extension-apps/extension-app-reference/extension-contracts/custom-query-language/) structure. 
+**Note:** These instructions only apply if you use the [mock data](https://github.com/docusign/extension-app-connected-fields-reference-implementation/blob/main/src/db/vehicleDatabase.csv) in the reference implementation. If you use your own database, you’ll need to construct your requests based on your own schema. Queries for extension tests in the Developer Console are built using [IQuery](https://developers.docusign.com/extension-apps/extension-app-reference/extension-contracts/custom-query-language/) structure. 
 
 
 #### Verify extension test
-The `typeName` property in the sample input maps to the name of a concept in the `model.cto` file. Any valid record ID can be used in this field.
+The `typeName` property in the sample input maps to the name of a concept in the `model.cto` file. Any valid concept name can be used in this field.
 
 The `idempotencyKey` property in the sample input can be left as is.
 
-The `data` property in the sample input are the key-value pairs of the properties of the `typeName` that is being verified, where the key is the name of the property within the concept, and the value is the input to verify. For example, if the Concept is defined like so:
+The `data` property in the sample input are the key-value pairs of the properties of the `typeName` that is being verified, where the key is the name of the property within the concept, and the value is the input to verify. For example, if the concept is defined as:
 
 ```
 @VerifiableType
-@Term('Email Address')
-concept VerifyEmailInput {
+@Term("Vehicle Identification")
+concept VehicleIdentification {
     @IsRequiredForVerifyingType
-    @Term('Email Address')
-    o String email length=[,256]
+    @Term("VIN")
+    o String vin
+
+    @IsRequiredForVerifyingType
+    @Term("State of Registration")
+    o String stateOfRegistration
+
+    @IsRequiredForVerifyingType
+    @Term("Country of Registration")
+    o String countryOfRegistration
 }
 ```
 
-Then the `data` property in the request body would be:
+Then the Verify request body would be:
 ```
-{ "email": "test@gmail.com" }
+{
+	"typeName": "VehicleIdentification",
+	"idempotencyKey": "mockIdempotencyKey",
+	"data": {
+		"vin": "XRHFCSNGUP4YBU5HB",
+		"stateOfRegistration": "CA",
+		"countryOfRegistration": "USA"
+	}
+}
 ```
 
 
-Running the test should return the following properties in the response `{ "success": true, "verificationResultCode": "SUCCESS" }`.
-
-Example:
-
-![Screenshot 2025-02-24 at 9 53 20 AM](https://github.com/user-attachments/assets/f422c219-3a78-4eea-8896-bdf985a1728f)
-
+Running the Verify test with the example request body above should return the following properties in the response:
+```
+{
+"verified":true
+"verifyResponseMessage":"Vehicle identification verification completed."
+"verificationResultCode":"SUCCESS"
+"verificationResultDescription":"Vehicle identification verification completed."
+}
+```
