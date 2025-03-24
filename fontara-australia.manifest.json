@@ -1,0 +1,85 @@
+{
+  "name": "Fontara Australia",
+  "description": {
+    "short": "Fontara Australia App",
+    "long": "This app is the Fontara Australia App"
+  },
+  "termsOfServiceUrl": "https://www.johndoe.com/tos",
+  "privacyUrl": "https://www.johndoe.com/privacy-security",
+  "supportUrl": "https://www.johndoe.com/support",
+  "publisher": {
+    "name": "Fontara",
+    "email": "fontara@gmail.com",
+    "phone": "123-456-7890",
+    "website": "https://www.fontaraapp.com"
+  },
+  "connections": [
+    {
+      "name": "authentication",
+      "description": "Secure connection to the connected fields proxy",
+      "type": "oauth2",
+      "params": {
+        "provider": "CUSTOM",
+        "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "clientSecret": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "scopes": [],
+        "customConfig": {
+          "authorizationMethod": "header",
+          "authorizationParams": {
+            "prompt": "consent",
+            "access_type": "offline"
+          },
+          "authorizationUrl": "https://app-extension-app-fontara-australia-ef3d.azurewebsites.net/api/oauth/authorize",
+          "requiredScopes": [],
+          "scopeSeparator": " ",
+          "tokenUrl": "https://app-extension-app-fontara-australia-ef3d.azurewebsites.net/api/oauth/token",
+          "refreshScopes": []
+        }
+      }
+    }
+  ],
+  "icon": {
+    "data": "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",
+    "mediaType": "image/png"
+  },
+  "screenshots": [],
+  "extensions": [
+    {
+      "name": "My Connected Fields Extension",
+      "description": "Used to verify and autofill agreements with custom data models",
+      "template": "ConnectedFields.Version1.ConnectedFields",
+      "actionReferences": ["My Verify Action", "My GetTypeNames Action", "My GetTypeDefinitions Action"]
+    }
+  ],
+  "actions": [
+    {
+      "name": "My Verify Action",
+      "description": "This is a description of my verify action",
+      "template": "ConnectedFields.Version1.Verify",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-australia-ef3d.azurewebsites.net/api/connectedfields/verify"
+      }
+    },
+    {
+      "name": "My GetTypeNames Action",
+      "description": "This is a description of my GetTypeNames action",
+      "template": "DataIO.Version6.GetTypeNames",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-australia-ef3d.azurewebsites.net/api/connectedfields/getTypeNames"
+      }
+    },
+    {
+      "name": "My GetTypeDefinitions Action",
+      "description": "This is a description of my GetTypeDefinitions action",
+      "template": "DataIO.Version6.GetTypeDefinitions",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-australia-ef3d.azurewebsites.net/api/connectedfields/getTypeDefinitions"
+      }
+    }
+  ],
+  "publicationRegions": ["US"],
+  "distribution": "PUBLIC"
+}
