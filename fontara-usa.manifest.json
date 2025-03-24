@@ -1,0 +1,85 @@
+{
+  "name": "Fontara US",
+  "description": {
+    "short": "Fontara US App",
+    "long": "This app is the Fontara US App"
+  },
+  "termsOfServiceUrl": "https://www.johndoe.com/tos",
+  "privacyUrl": "https://www.johndoe.com/privacy-security",
+  "supportUrl": "https://www.johndoe.com/support",
+  "publisher": {
+    "name": "Fontara",
+    "email": "fontara@gmail.com",
+    "phone": "123-456-7890",
+    "website": "https://www.fontaraapp.com"
+  },
+  "connections": [
+    {
+      "name": "authentication",
+      "description": "Secure connection to the connected fields proxy",
+      "type": "oauth2",
+      "params": {
+        "provider": "CUSTOM",
+        "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "clientSecret": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "scopes": [],
+        "customConfig": {
+          "authorizationMethod": "header",
+          "authorizationParams": {
+            "prompt": "consent",
+            "access_type": "offline"
+          },
+          "authorizationUrl": "https://app-extension-app-fontara-usa-89af.azurewebsites.net/api/oauth/authorize",
+          "requiredScopes": [],
+          "scopeSeparator": " ",
+          "tokenUrl": "https://app-extension-app-fontara-usa-89af.azurewebsites.net/api/oauth/token",
+          "refreshScopes": []
+        }
+      }
+    }
+  ],
+  "icon": {
+    "data": "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",
+    "mediaType": "image/png"
+  },
+  "screenshots": [],
+  "extensions": [
+    {
+      "name": "My Connected Fields Extension",
+      "description": "Used to verify and autofill agreements with custom data models",
+      "template": "ConnectedFields.Version1.ConnectedFields",
+      "actionReferences": ["My Verify Action", "My GetTypeNames Action", "My GetTypeDefinitions Action"]
+    }
+  ],
+  "actions": [
+    {
+      "name": "My Verify Action",
+      "description": "This is a description of my verify action",
+      "template": "ConnectedFields.Version1.Verify",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-usa-89af.azurewebsites.net/api/connectedfields/verify"
+      }
+    },
+    {
+      "name": "My GetTypeNames Action",
+      "description": "This is a description of my GetTypeNames action",
+      "template": "DataIO.Version6.GetTypeNames",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-usa-89af.azurewebsites.net/api/connectedfields/getTypeNames"
+      }
+    },
+    {
+      "name": "My GetTypeDefinitions Action",
+      "description": "This is a description of my GetTypeDefinitions action",
+      "template": "DataIO.Version6.GetTypeDefinitions",
+      "connectionsReference": "authentication",
+      "params": {
+        "uri": "https://app-extension-app-fontara-usa-89af.azurewebsites.net/api/connectedfields/getTypeDefinitions"
+      }
+    }
+  ],
+  "publicationRegions": ["US"],
+  "distribution": "PUBLIC"
+}
