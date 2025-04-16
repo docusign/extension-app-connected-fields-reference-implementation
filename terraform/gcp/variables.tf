@@ -48,7 +48,7 @@ variable "application_name" {
   description = "The name of the application"
   type        = string
   nullable    = false
-  default     = "extension-app-data-io"
+  default     = "extension-app-connected-fields"
 
   validation {
     condition     = can(regex("^[a-zA-Z0-9-]+$", var.application_name)) && length(var.application_name) <= 32

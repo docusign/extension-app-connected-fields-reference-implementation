@@ -21,7 +21,7 @@ Before deploying your extension app on AWS, complete the following setup steps:
 
 In that case `aws` Terraform provider is authenticated to AWS using [shared configuration and credentials files](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#shared-configuration-and-credentials-files), but you may use other methods for [authenticating to AWS](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration).
 
-Now that you’ve set up your AWS environment, continue with the [Terraform deployment guide](terraform/README.md) to provision your infrastructure.
+Now that you’ve set up your AWS environment, continue with the [Terraform deployment guide](../README.md) to provision your infrastructure.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -85,7 +85,7 @@ Now that you’ve set up your AWS environment, continue with the [Terraform depl
 | <a name="input_application_instance_cpu"></a> [application\_instance\_cpu](#input\_application\_instance\_cpu) | The number of CPU units to allocate to the application instance | `string` | `"256"` | no |
 | <a name="input_application_instance_memory"></a> [application\_instance\_memory](#input\_application\_instance\_memory) | The amount of memory to allocate to the application instance | `string` | `"512"` | no |
 | <a name="input_application_jwt_secret_key"></a> [application\_jwt\_secret\_key](#input\_application\_jwt\_secret\_key) | The secret key to use for signing JWT tokens. If empty, a random key will be generated. | `string` | `""` | no |
-| <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of the application | `string` | `"extension-app-data-io"` | no |
+| <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of the application | `string` | `"extension-app-connected-fields"` | no |
 | <a name="input_application_oauth_client_id"></a> [application\_oauth\_client\_id](#input\_application\_oauth\_client\_id) | The OAuth client ID for the application. If empty, a random client ID will be generated. | `string` | `""` | no |
 | <a name="input_application_oauth_client_secret"></a> [application\_oauth\_client\_secret](#input\_application\_oauth\_client\_secret) | The OAuth client secret for the application. If empty, a random client secret will be generated. | `string` | `""` | no |
 | <a name="input_application_port"></a> [application\_port](#input\_application\_port) | The port the application listens on | `number` | `3000` | no |
