@@ -257,7 +257,8 @@ variable "manifest_files_paths" {
   description = "The list of manifest files relative paths to generate"
   type        = list(string)
   default = [
-    "../../manifest.json",
+    "../../manifests/authorizationCode/manifest.json",
+    "../../manifests/clientCredentials/manifest.json",
   ]
 }
 

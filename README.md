@@ -4,8 +4,15 @@ This reference implementation models the implementation of [connected fields ver
 
 To test this reference implementation, modify the `manifest.json` file.
 
+## Authentication
+This reference implementation supports two [authentication](https://developers.docusign.com/extension-apps/build-an-extension-app/it-infrastructure/authorization/) flows:
+* [Authorization Code Grant](https://developers.docusign.com/extension-apps/build-an-extension-app/it-infrastructure/authorization/#authorization-code-grant) – required for public extension apps
+* [Client Credentials Grant](https://developers.docusign.com/extension-apps/build-an-extension-app/it-infrastructure/authorization/#client-credentials-grant) – available to private extension apps. See [Choosing private distribution instead of public](https://developers.docusign.com/extension-apps/extension-apps-101/choosing-private-distribution/)
+
+*Private extension apps can use either authentication method, but public extension apps must use Authorization Code Grant.*
+
 ## Hosted Version (no setup required)
-You can use the hosted version of this reference implementation by directly uploading the manifest file located in the root of the repository: `hosted.manifest.json` to the Docusign Developer Console. See [Upload your manifest and create the file archive app](#3-upload-your-manifest-and-create-the-connected-fields-app).
+You can use the hosted version of this reference implementation by directly uploading the appropriate manifest file located in the [manifests/hosted/](manifests/hosted) folder to the Docusign Developer Console. See [Upload your manifest and create the file archive app](#3-upload-your-manifest-and-create-the-connected-fields-app).
 
 **Note:** The provided manifest includes `clientId` and `clientSecret` values used in the sample authentication connection. These do not authenticate to a real system, but the hosted reference implementation requires these exact values.
 
@@ -102,7 +109,7 @@ Connections                   ttl     opn     rt1     rt5     p50     p90
 In this example, the `Forwarding` address to copy is `https://bbd7-12-202-171-35.ngrok-free.app`.
 ## Create an extension app
 ### 1. Prepare your app manifest
-Replace `<PROXY_BASE_URL>` in your manifest file with the ngrok forwarding address in the following sections:
+Choose a manifest from the [manifests](manifests/) folder based on the appropriate [authentication](#authentication) use case.Replace `<PROXY_BASE_URL>` in your manifest file with the ngrok forwarding address in the following sections:
 - `connections.params.customConfig.tokenUrl`
 - `connections.params.customConfig.authorizationUrl`
 - `actions.params.uri`
